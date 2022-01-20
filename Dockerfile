@@ -1,8 +1,11 @@
 FROM python:3.9.5
 
-ADD . /app
+ADD example.py uvloop-0.16.0+fortanix-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl /app/
 
-RUN pip install uvicorn[standard]
+# Install all of the standard dependencies, and then replace the uvloop
+# package with the patched version.
+RUN pip install uvicorn[standard] \
+    && pip install /app/uvloop-0.16.0+fortanix-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl
 
 WORKDIR /app
 

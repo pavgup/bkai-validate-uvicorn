@@ -1,0 +1,54 @@
+diff -Naur uvloop-0.16.0-orig/PKG-INFO uvloop-0.16.0/PKG-INFO
+--- uvloop-0.16.0-orig/PKG-INFO	2021-08-10 12:05:48.862241300 -0700
++++ uvloop-0.16.0/PKG-INFO	2022-01-20 12:26:32.147881813 -0800
+@@ -1,6 +1,6 @@
+ Metadata-Version: 2.1
+ Name: uvloop
+-Version: 0.16.0
++Version: 0.16.0+fortanix
+ Summary: Fast implementation of asyncio event loop on top of libuv
+ Home-page: http://github.com/MagicStack/uvloop
+ Author: Yury Selivanov
+diff -Naur uvloop-0.16.0-orig/uvloop/_version.py uvloop-0.16.0/uvloop/_version.py
+--- uvloop-0.16.0-orig/uvloop/_version.py	2021-08-10 12:05:35.000000000 -0700
++++ uvloop-0.16.0/uvloop/_version.py	2022-01-20 12:26:42.087891489 -0800
+@@ -10,4 +10,4 @@
+ # supported platforms, publish the packages on PyPI, merge the PR
+ # to the target branch, create a Git tag pointing to the commit.
+ 
+-__version__ = '0.16.0'
++__version__ = '0.16.0+fortanix'
+diff -Naur uvloop-0.16.0-orig/uvloop.egg-info/PKG-INFO uvloop-0.16.0/uvloop.egg-info/PKG-INFO
+--- uvloop-0.16.0-orig/uvloop.egg-info/PKG-INFO	2021-08-10 12:05:44.000000000 -0700
++++ uvloop-0.16.0/uvloop.egg-info/PKG-INFO	2022-01-20 12:27:02.979911812 -0800
+@@ -1,6 +1,6 @@
+ Metadata-Version: 2.1
+ Name: uvloop
+-Version: 0.16.0
++Version: 0.16.0+fortanix
+ Summary: Fast implementation of asyncio event loop on top of libuv
+ Home-page: http://github.com/MagicStack/uvloop
+ Author: Yury Selivanov
+diff -Naur uvloop-0.16.0-orig/vendor/libuv/src/unix/async.c uvloop-0.16.0/vendor/libuv/src/unix/async.c
+--- uvloop-0.16.0-orig/vendor/libuv/src/unix/async.c	2021-08-10 12:05:36.000000000 -0700
++++ uvloop-0.16.0/vendor/libuv/src/unix/async.c	2022-01-20 12:19:09.899442743 -0800
+@@ -175,7 +175,8 @@
+   len = 1;
+   fd = loop->async_wfd;
+ 
+-#if defined(__linux__)
++  /* Fortanix: Disable use of eventfds. */
++#if 0
+   if (fd == -1) {
+     static const uint64_t val = 1;
+     buf = &val;
+@@ -206,7 +207,8 @@
+   if (loop->async_io_watcher.fd != -1)
+     return 0;
+ 
+-#ifdef __linux__
++  /* Fortanix: Disable use of eventfds. */
++#if 0
+   err = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
+   if (err < 0)
+     return UV__ERR(errno);

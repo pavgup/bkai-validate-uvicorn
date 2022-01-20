@@ -1,0 +1,16 @@
+This directory contains a Dockerfile and build script for building
+the uvloop Python library that has been patched with the uvloop.patch
+file. The patch modifies the uvloop library to use a pipe instead of
+a Linux eventfd for eventing. (The pipe code is used on non-Linux
+unix systems that don't have eventfds. The patch changes some
+#ifdefs in the code so when building for Linux, the non-Linux
+code is used).
+
+The build.sh script will create the docker image, run it to build
+the python package, and copy the built python package outside of
+the build container.
+
+The .whl file can be installed by copying it into a container and
+running `pip` with the path to the .whl file.
+
+
